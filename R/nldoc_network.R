@@ -3,6 +3,7 @@
 #' @description Create NetLogo procedure network
 #'
 #' @param modelfiles vector of filepaths to model files
+#' @param reporters logical whether to return reporters
 #'
 #' @return network of model procedures (igraph)
 #'
@@ -47,7 +48,7 @@
 #'
 #' @export
 
-nldoc_network <- function(modelfiles)
+nldoc_network <- function(modelfiles, reporters = F)
 {
   ## Create a network from procedures:
 
@@ -55,11 +56,11 @@ nldoc_network <- function(modelfiles)
   nlogocode <- nldoc_read_nlogo(modelfiles)
 
   ## Now find these names in model code:
-  nw <- nldoc_find_procedure_calls(nlogocode)
+  nw <- nldoc_find_procedure_calls(nlogocode, reporters = reporters)
 
   ## Create and plot network:
 
-  nw.ig <- igraph::graph_from_data_frame(nw)
+  nw.ig <- igraph::graph_from_data_frame(nw$links,vertices = nw$nodes)
   nw.ig <- igraph::simplify(nw.ig, remove.multiple = T, remove.loops = T)
 
   return(nw.ig)
